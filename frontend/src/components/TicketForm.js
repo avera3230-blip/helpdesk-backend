@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import API from "../services/api";
 
-function TicketForm() {
+function TicketForm({
+  ticketEditar,
+  setTicketEditar,
+  recargarTickets,
+}) {
   const [ticket, setTicket] = useState({
     titulo: "",
     descripcion: "",
@@ -9,6 +13,24 @@ function TicketForm() {
     prioridad: "Media",
     estado: "Abierto",
   });
+
+  useEffect(() => {
+    if (ticketEditar) {
+      setTicket(ticketEditar);
+    }
+  }, [ticketEditar]);
+
+  const limpiarFormulario = () => {
+    setTicket({
+      titulo: "",
+      descripcion: "",
+      categoria: "Red",
+      prioridad: "Media",
+      estado: "Abierto",
+    });
+
+    setTicketEditar(null);
+  };
 
   const handleChange = (e) => {
     setTicket({
@@ -21,17 +43,18 @@ function TicketForm() {
     e.preventDefault();
 
     try {
-      await API.post("/", ticket);
+      if (ticketEditar) {
+        await API.put(`/${ticketEditar._id}`, ticket);
 
-      alert("Ticket guardado correctamente");
+        alert("Ticket actualizado correctamente");
+      } else {
+        await API.post("/", ticket);
 
-      setTicket({
-        titulo: "",
-        descripcion: "",
-        categoria: "Red",
-        prioridad: "Media",
-        estado: "Abierto",
-      });
+        alert("Ticket guardado correctamente");
+      }
+
+      limpiarFormulario();
+      recargarTickets();
     } catch (error) {
       console.error(error);
       alert("Error al guardar el ticket");
@@ -40,7 +63,9 @@ function TicketForm() {
 
   return (
     <div>
-      <h2>Nuevo Ticket</h2>
+      <h2>
+        {ticketEditar ? "Editar Ticket" : "Nuevo Ticket"}
+      </h2>
 
       <form onSubmit={handleSubmit}>
         <input
@@ -91,8 +116,18 @@ function TicketForm() {
         </select>
 
         <button type="submit">
-          Guardar Ticket
+          {ticketEditar ? "Actualizar Ticket" : "Guardar Ticket"}
         </button>
+
+        {ticketEditar && (
+          <button
+            type="button"
+            onClick={limpiarFormulario}
+            style={{ marginLeft: "10px" }}
+          >
+            Cancelar
+          </button>
+        )}
       </form>
     </div>
   );

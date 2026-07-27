@@ -1,7 +1,16 @@
+import { useState } from "react";
 import "./styles/App.css";
 import TicketForm from "./components/TicketForm";
+import TicketList from "./components/TicketList";
 
 function App() {
+  const [ticketEditar, setTicketEditar] = useState(null);
+  const [actualizarLista, setActualizarLista] = useState(false);
+
+  const recargarTickets = () => {
+    setActualizarLista(!actualizarLista);
+  };
+
   return (
     <div className="container">
 
@@ -11,7 +20,19 @@ function App() {
       </div>
 
       <div className="card">
-        <TicketForm />
+        <TicketForm
+          ticketEditar={ticketEditar}
+          setTicketEditar={setTicketEditar}
+          recargarTickets={recargarTickets}
+        />
+      </div>
+
+      <div className="card">
+        <TicketList
+          setTicketEditar={setTicketEditar}
+          actualizarLista={actualizarLista}
+          recargarTickets={recargarTickets}
+        />
       </div>
 
     </div>
