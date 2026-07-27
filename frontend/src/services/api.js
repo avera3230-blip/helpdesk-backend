@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:3000/api/tickets",
+  baseURL: "https://helpdesk-fullstack.onrender.com/api/tickets",
 });
 
 export default API;
